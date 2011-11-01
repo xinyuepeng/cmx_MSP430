@@ -1,0 +1,33 @@
+#include "msp430x23x.h"
+        CASEON
+
+	RSEG	CODE(1)
+	
+	EXTERN	K_OS_Intrp_Entry
+	EXTERN	K_OS_Intrp_Exit
+	EXTERN	int_handler
+	PUBLIC	irq_rtn
+
+	COMMON	INTVEC
+; NOTE: set for 320 processor vector table
+
+	org 	TIMERB1_VECTOR
+	DW	irq_rtn
+
+	RSEG	CODE
+irq_rtn:
+        PUSH    R14
+        ADD     &TBIV, R14
+        POP     R14
+	CALL 	#K_OS_Intrp_Entry
+	CALL 	#int_handler	;call interrupt handler function, that
+				;will possibly send a message
+	CALL 	#K_OS_Intrp_Exit	;done, exit
+; This is needed, for some reason if it not included when the linker
+; links this code in, the very last instruction is not part of
+; the output, so really the RET acks as an instruction, which will
+; be left out and is not used, so we are fine!!!
+	RET			;
+
+	end
+

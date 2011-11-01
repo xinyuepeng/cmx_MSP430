@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <fileChecksum>1914985291</fileChecksum>
+  <configuration>
+    <name>Debug</name>
+    <outputs>
+      <file>$PROJ_DIR$\cmxmod\Cpdefine.h</file>
+      <file>$PROJ_DIR$\cmxmod\Cpconfig.h</file>
+      <file>$TOOLKIT_DIR$\config\multiplier.xcl</file>
+      <file>$TOOLKIT_DIR$\lib\clib\cl430f.r43</file>
+      <file>$PROJ_DIR$\Debug\List\main.s43</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$TOOLKIT_DIR$\inc\msp430x23x.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$TOOLKIT_DIR$\config\lnk430F235.xcl</file>
+      <file>$PROJ_DIR$\Debug\List\SystemState.s43</file>
+      <file>$PROJ_DIR$\Debug\List\PowerClockControl.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\CPSKV1.r43</file>
+      <file>$TOOLKIT_DIR$\inc\in430.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\Cmx_inip.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\SystemState.r43</file>
+      <file>$PROJ_DIR$\Debug\List\SystemState.lst</file>
+      <file>$TOOLKIT_DIR$\inc\msp430x14x.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\PowerClockControl.r43</file>
+      <file>$PROJ_DIR$\Debug\List\KeyInput.s43</file>
+      <file>$PROJ_DIR$\Debug\Exe\cmx135.d43</file>
+      <file>$PROJ_DIR$\Debug\Obj\KeyInput.r43</file>
+      <file>$PROJ_DIR$\Debug\List\Tinyp.s43</file>
+      <file>$PROJ_DIR$\Debug\List\ADC.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\PowerClockControl.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\Cxpver1.lst</file>
+      <file>$PROJ_DIR$\Debug\List\ADC.lst</file>
+      <file>$PROJ_DIR$\Debug\List\PowerClockControl.lst</file>
+      <file>$PROJ_DIR$\Debug\List\HMI.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\Tinyp.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\HMI.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\HMI.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\Cmx_inip.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\SystemState.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\SystemData.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\ADC.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\cmx135.pbd</file>
+      <file>$PROJ_DIR$\Debug\Obj\SystemData.r43</file>
+      <file>$PROJ_DIR$\Debug\List\SystemData.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\Cxpver1.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\SystemData.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\ADC.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\HMI.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\KeyInput.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\Cmx_inip.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\Cxpver1.r43</file>
+      <file>$PROJ_DIR$\Debug\List\Cxpver1.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\Tinypa.r43</file>
+      <file>$PROJ_DIR$\Debug\List\KeyInput.lst</file>
+      <file>$PROJ_DIR$\Debug\List\main.lst</file>
+      <file>$PROJ_DIR$\Debug\List\Tinyp.lst</file>
+      <file>$PROJ_DIR$\Debug\List\Cmx_inip.lst</file>
+      <file>$PROJ_DIR$\HMI.c</file>
+      <file>$PROJ_DIR$\KeyInput.c</file>
+      <file>$PROJ_DIR$\PowerClockControl.c</file>
+      <file>$PROJ_DIR$\PowerClockControl.h</file>
+      <file>$PROJ_DIR$\SysConfig.h</file>
+      <file>$PROJ_DIR$\SystemData.c</file>
+      <file>$PROJ_DIR$\SystemState.c</file>
+      <file>$PROJ_DIR$\cmxmod\CPSKV1.s43</file>
+      <file>$PROJ_DIR$\cmxmod\Cpstruct.h</file>
+      <file>$PROJ_DIR$\cmxmod\Cpvendor.h</file>
+      <file>$PROJ_DIR$\cmxmod\Cxpver1.c</file>
+      <file>$PROJ_DIR$\cmxmod\Tinyp.c</file>
+      <file>$PROJ_DIR$\cmxmod\Tinypa.s43</file>
+      <file>$PROJ_DIR$\ADC.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\Tinyp.r43</file>
+      <file>$PROJ_DIR$\cmxmod\Cmx_inip.c</file>
+      <file>$PROJ_DIR$\cmxmod\Cpextern.h</file>
+      <file>$PROJ_DIR$\cmxmod\Cpfuncs.h</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 7</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 4 50 17</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\cmx135.d43</name>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 8 2 42 11 13 46 43 21 18 37 14 67 48 3</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 20</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Obj\cmx135.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 35 45 39 31 44 24 41 33 29</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\HMI.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 31</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\KeyInput.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 44</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\PowerClockControl.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\SystemData.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 41</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\SystemState.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 33</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\cmxmod\CPSKV1.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\cmxmod\Cxpver1.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 39</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 47 25 46</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 70 0 62 61 69</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 70 0 62 61 69</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\cmxmod\Tinyp.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 29</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 22 51 67</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 70 0 62 61 16 12 40</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 70 0 62 61 16 12 40</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\cmxmod\Tinypa.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 48</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 6</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\ADC.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 35</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\cmxmod\Cmx_inip.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 45</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 32 52 13</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 70 0 62 61 1</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 70 0 62 61 1</file>
+        </tool>
+      </inputs>
+    </file>
+  </configuration>
+  <configuration>
+    <name>Release</name>
+    <outputs/>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
+    <forcedrebuild>
+      <name>[REBUILD_ALL]</name>
+    </forcedrebuild>
+  </configuration>
+</project>
+
+

@@ -1,0 +1,327 @@
+;******************************************************
+;
+;	Copyright (C) 1999-2000
+;	CMX Systems Inc.
+;	680 Worcester Road
+;	Framingham, Mass 01702
+;
+;	All Rights Reserved
+;
+;	CONFIDENTIAL
+;*******************************************************
+; CMX TINY+ (PLUS) version
+; For TI MSP430 processors
+;
+; NOTE: it is assumed that the timer task is at cmx_tcb[0];
+;
+;The following is for the RAM TASK Control Block
+tcbtimer	equ 	00h	;task countdown delay timer
+stk_save  	equ	02h	;the task's saved stack's address
+nxttcb  	equ	04h	;ptr to next TCB (task control block)
+rom_tcb_index	equ 	06h	;the tasks beginning stack's address
+tcbstate	equ	08h	;task state    
+wait		equ 	09h	;the number of triggers (starts) for task
+priority	equ	0ah	;task priority, 0 is highest
+e_flags		equ	0bh
+e_match		equ	0ch
+
+	
+; The following is the ROM Task Control Block (TCB) structure
+task_addr	equ	00h	;The task's address
+system_stack	equ	02h	;The start address of the task stack (SYSTEM)
+ram_tcb_index	equ	04h	;The RAM TCB array index number
+init_priority	equ	05h	;The initial priority of this task
+
+SIZEOF_ROM_TCB  equ	06h
+
+KILL		equ	00h	;the task is killed
+EVENT		equ	01h	;waiting on event flag
+RESOURCE	equ	02h	;waiting on resource
+MESSAGE		equ	04h	;waiting for task that recieved messageh,to wake me
+TIME		equ	08h	;waiting on time (can be set with other wait states)
+CMX_WAIT	equ	10h	;General wait 
+
+IDLE 		equ	20h	;task not able to runh, no triggers
+READY 		equ	40h	;the task ready to run
+RESUME		equ	80h	;the task ready to runh, resume where it left off
+RUNNING		equ	0C0h	;the task is the running task
+	
+ANY_WAIT	equ	1Fh	;mask to test for any wait state
+
+preempted 	equ 	01h	;preemption flag position
+do_timer_tsk	equ 	02h	;timer task flag position
+do_coop_sched	equ 	10h	;cooperative scheduling flag position
+idle_flag	equ 	40h	;used by CMX to see if all tasks cannot run
+cmx_active	equ 	80h	;shows that the CMX OS entered
+
+	EXTERN	cmx_tcb 
+	EXTERN	K_I_Timer_Task
+	EXTERN	K_OS_Low_Power_Func
+	EXTERN	task_rom_list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;	Warning: the following are declared near. They
+;	MUST NOT be changed. Must be located in zpage
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	EXTERN int_count
+	EXTERN locked_out
+	EXTERN cmx_flag1
+	EXTERN activetcb 
+	EXTERN stack_holder 
+	EXTERN interrupt_stack 
+	EXTERN hx_holder 
+	EXTERN sr_holder
+		  
+
+	PUBLIC	K_OS_Intrp_Entry
+	PUBLIC	K_OS_Intrp_Exit
+	PUBLIC	K_I_Sched
+	PUBLIC 	K_I_Scheduler
+	PUBLIC	K_OS_Disable_Interrupts 
+	PUBLIC	K_OS_Enable_Interrupts 
+	PUBLIC	K_OS_Save_Interrupts 
+	PUBLIC	K_OS_Restore_Interrupts 
+
+LOW_POWER_ACTIVE: equ 1	;SET TO 1 FOR LOW POWER CAPABILITIES
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; WARNING:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; It seems that a NOP is required AFTER the DINT instruction.
+; Please do NOT remove the NOP's
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	RSEG CODE
+
+K_I_Sched:
+	PUSH SR		;save states of flags
+ 	PUSH R4	;save all the registers
+ 	PUSH R5	
+ 	PUSH R6	
+ 	PUSH R7	
+ 	PUSH R8	
+ 	PUSH R9	
+ 	PUSH R10
+ 	PUSH R11
+ 	PUSH R12
+ 	PUSH R13
+ 	PUSH R14
+ 	PUSH R15
+sched_int:
+ 	MOV	&activetcb,R12 	;get current running task pointer
+ 	CMP.B   #RUNNING,tcbstate(R12)	;see if running
+	JNE	sched_cont	;no, so set flag indicating the task should
+				;finish its code, because the interrupt
+				;preempted it, during a task locked out
+ 	MOV	#RESUME,tcbstate(R12)	;yes, identify that task can resume
+sched_cont:
+ 	MOV	SP,stk_save(R12) ;save the current stack pointer of task
+K_I_Scheduler:	
+	DINT
+	NOP
+ 	MOV	&interrupt_stack,SP ;load in interrupt stack, also 
+;				 ;K_I_Scheduler's stack
+	MOV.B	#01h,&int_count	;this forces interrupts to return to
+;				;return to K_I_Scheduler
+	MOV.B	#01h,&locked_out ;this will let timer task and int_pipe
+;				;goto K_I_Scheduler
+sched_again:
+ 	EINT		 	;enable interrupts
+rescan1:
+	BIT.B 	#do_timer_tsk,&cmx_flag1	;test to see if timer task should be done
+	JEQ	rescan4
+	BIC.B	#do_timer_tsk,&cmx_flag1	;clear flag
+	PUSH R12
+	CALL 	#K_I_Timer_Task	;call K_I_Timer_Task
+	POP R12			;restore activetcb pointer
+rescan4:
+	BIT.B 	#preempted,&cmx_flag1	;test for preemption
+	JEQ	rescan5
+	BIC.B 	#(preempted | do_coop_sched),&cmx_flag1	;clear flags
+	BIS.B 	#idle_flag,&cmx_flag1	;set bit indicating top of list
+	MOV	&(cmx_tcb+nxttcb),R12		;start at beginning of linked list
+	JMP 	midpaus2
+rescan5:
+	BIT.B 	#do_coop_sched,&cmx_flag1	;test for cooperative scheduling
+	JEQ	midpaus2
+	BIC.B 	#do_coop_sched,&cmx_flag1	;clear flag
+	JMP 	findready
+midpaus2:
+ 	BIT.B	#(RESUME | READY),tcbstate(R12)	;test state of this task
+			   			;see if task can fire up
+ 	JNE	task_resume	;yes, so jump
+findready:
+ 	MOV	nxttcb(R12),R12	;get next task in line, according to priority
+	CMP	#cmx_tcb,R12	;see if we have gone thru list of tasks
+	JNE	midpaus2
+ if LOW_POWER_ACTIVE <> 0
+; here means that we have gone to end of list
+; if idle flag set and list_complete flag set go to idle state
+	BIT.B #idle_flag,&cmx_flag1
+	JEQ	no_power_down
+power_down:
+	PUSH R12
+	CALL 	#K_OS_Low_Power_Func
+	POP R12
+no_power_down:
+ endif
+ 	MOV	nxttcb(R12),R12	;get highest priority user task
+ 	JMP	rescan1		;go test this task
+task_resume:	
+	BIC.B 	#idle_flag,&cmx_flag1
+	MOV	R12,&activetcb	;store active tcb pointer
+ 	DINT			;disable interrupts 
+	NOP
+	BIT.B	#(preempted | do_timer_tsk),&cmx_flag1	;test these 2 bits
+	JNE	sched_again	;if either of these flags were set, then process them
+resume_good:
+ 	MOV.B 	#0,&int_count 	;reset int count
+ 	MOV.B 	#0,&locked_out 	;reset locked out so sched function will operate
+	BIT.B	#READY,tcbstate(R12) ;test to see if task just starting it's code
+ 	JNE	task_ready	;yes, jump
+	BIS.B	#RUNNING,tcbstate(R12)	;set task to RUNNING state
+ 	MOV	stk_save(R12),SP ;reload the stack pointer of task's stack
+done_scheduler:
+ 	POP R15	;restore registers
+ 	POP R14
+ 	POP R13
+ 	POP R12
+ 	POP R11
+ 	POP R10
+ 	POP R9	
+ 	POP R8	
+ 	POP R7	
+ 	POP R6	
+ 	POP R5	
+ 	POP R4	
+	RETI
+task_ready:
+;starting task from beginning brace
+	BIS.B	#RUNNING,tcbstate(R12)	;set task to RUNNING state
+	MOV	rom_tcb_index(R12),R11	;get ROM TCB index ADDRESS
+	MOV	system_stack(R11),SP	;get task beginning stack address
+	MOV	task_addr(R11),R12	;now get task's starting address
+	PUSH	R12
+	EINT		;enable interrupts
+	RET		;go to task
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;	CAUTION to anyone writing interrupt service routines! ;;;;;;
+;
+;	The system tick timer interrupt MUST call these routines
+;			
+;	Any interrupt that wants to use ANY of the CMX functions
+;	MUST call these routines.
+;
+;	Here's an example of an interrupt service routine that uses 
+;	this method:
+;
+;	interrupt vector: interrupt vectors to here.
+;		CALL	#K_OS_Intrp_Entry
+;		set interrupt masks if user wants
+;		EINT		;re-enable interrupts if user wants
+;		...miscellaneous user ISR code, including...
+;		CALL	#K_OS_Intrp_Exit	;replaces rti instruction
+;
+;	user can write interrupt routines in "C" as long as the 
+; 	following epilog and prolog takes place.
+;
+;	interrupt vector:
+;		CALL 	#K_OS_Intrp_Entry
+;		set interrupt masks if user wants
+;		EINT	;re-enable interrupts is user wants
+;		CALL 	#C_WRITTEN_INTERRUPT_CODE
+;		CALL	#K_OS_Intrp_Exit
+;	If user wants to use any of the CMX calls (supported by interrupts)
+;	then they may want to either write that call in "C" or 
+;	write an example in "C" and then see how parameters are put
+;	onto stack and follow the compiler's way of doing this.
+;		
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+ret_offset equ 22
+
+K_OS_Intrp_Entry:	
+ 	PUSH R5	
+ 	PUSH R6	
+ 	PUSH R7	
+ 	PUSH R8	
+ 	PUSH R9	
+ 	PUSH R10
+ 	PUSH R11
+ 	PUSH R12
+ 	PUSH R13
+ 	PUSH R14
+ 	PUSH R15
+	MOV	ret_offset(SP),R12
+	MOV	R4,ret_offset(SP)
+	BIT.B	#cmx_active,&cmx_flag1
+	JEQ	K_OS_Intrp_Entry_exit
+ 	TST.B	&int_count	;see if interrupt count > 0
+	JNE 	no_stack_load	;yes, then interrupt stack already being used
+	MOV	SP,&stack_holder	;no, save current task stack
+	MOV	&interrupt_stack,SP	;swap in interrupt stack
+no_stack_load:
+	ADD.B	#1,&int_count 	;increment the interrupt count
+K_OS_Intrp_Entry_exit:
+ 	ADD.B	#1,&locked_out	;increment the locked_out byte
+	PUSH R12
+	RET	;return to interrupt code
+
+K_OS_Intrp_Exit:	
+ 	DINT		;disable interrupts while still locked
+	NOP
+ 	ADD	#2,SP	;add 2 to stack pointer	because of call
+ 	ADD.B	#-1,&locked_out	;decrement the locked_out byte
+	BIT.B	#cmx_active,&cmx_flag1
+	JEQ	done_scheduler
+ 	ADD.B	#-1,&int_count 	;decrement the interrupt count
+ 	JNE	done_scheduler	;if non zero (0), return to lower priority
+	MOV	&stack_holder,SP ;reload task's stack 
+	TST.B	&locked_out	;see if were within critical region
+	JNE	done_scheduler	;yes, then exit
+	BIT.B	#(preempted | do_timer_tsk | do_coop_sched),&cmx_flag1
+	JEQ	done_scheduler	;if none set, then exit
+jmp_sched_int:
+	ADD.B 	#1,&locked_out	;increment locked out count
+	MOV	#sched_int,R12	;set return address to sched_int
+	PUSH	R12
+	MOV	#0008h,R12	;set SR reg (it will be POPPED value)
+	PUSH	R12
+	RETI	
+
+K_OS_Disable_Interrupts: 
+	DINT			;disable interrupts
+	RET
+
+K_OS_Enable_Interrupts: 
+	EINT			;enable interrupts
+	RET
+
+K_OS_Save_Interrupts: 
+	PUSH	R12
+	PUSH	SR
+	DINT			;disable interrupts
+	NOP
+	POP	R12
+ 	MOV	R12,&sr_holder	;save SR reg (really for GIE bit)
+	POP	R12
+	RET
+
+K_OS_Restore_Interrupts: 
+	PUSH	R12
+ 	MOV	&sr_holder,R12	;restore SR reg (really for GIE bit)
+;Modified on 6/2/05 so if someone modifies stacked SR for osc issues, we wont
+;modify them
+;	PUSH	R12
+;	POP	SR	
+	BIT.B	#08h,R12
+	JEQ	K_OS_Restore1
+ 	EINT		 	;enable interrupts
+K_OS_Restore1:
+	POP	R12
+	RET
+
+
+	end
+
