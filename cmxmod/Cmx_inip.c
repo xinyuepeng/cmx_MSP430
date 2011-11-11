@@ -224,10 +224,12 @@ void K_OS_Tick_Update()
  time counters decremented if need be.
 *****************************************************************/
 void SystemLowPowerMode();
+#include "MSP430x14x.h"
 void K_OS_Low_Power_Func()
 {
-    if(int_count != 1)
-        SystemLowPowerMode();
+    P4OUT |= 0x01;
+    LPM3;
+    P4OUT &= 0xFE;
 }
 
 

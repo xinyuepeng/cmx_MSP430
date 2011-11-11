@@ -1,5 +1,4 @@
 #include "PowerClockControl.h"
-#include "Alarm.h"
 
 static unsigned char bEnableLowPowerMode = 0;
 void InitPowerClockController(void)
@@ -30,61 +29,4 @@ void InitPowerClockController(void)
 
     P4SEL  = 0x00;             // SELECT P4.0 TO P4.7 FOR I/O
     P4DIR  = 0xFF;             // SET P4 TO OUTPUT 
-
-    P5SEL  = 0x00;             // SELECT P5.0 TO P5.7 FOR I/O 
-    P5DIR  = 0xFF;             // SET P5 TO OUTPUT   
-    
-    //Key Pin Init
-    P1SEL &=~POWER_SWITCH;           // SET P1.5 FOR POWER SWITCH PIN
-    P1DIR |= POWER_SWITCH;           // SET P1.5 TO OUPUT DIRECTION
-    P1OUT &=~POWER_SWITCH;           // SET POWER SWITCH TO OFF STATUS
-
-#ifndef HW_SPIDER_1_0   
-    P1SEL &=~AUTOCAL_SWITCH;         // SET P1.3 FOR AUTOCAL SWITCH INPUT PIN 
-    P1DIR &=~AUTOCAL_SWITCH;         // SET P1.3 TO INPUT DIRECTION.
-#endif
-   
-    P2SEL &=~SELECT_SWITCH;          // SET P2.4 FOR SELECT SWITCH INPUT PIN 
-    P2DIR &=~SELECT_SWITCH;          // SET P2.4 TO INPUT DIRECTION.
-    
-    //For ADC Pin configure    
-#if SENSOR_TYPE == SENSOR_CO || SENSOR_TYPE == SENSOR_H2S
-    P6SEL |= 0X3E;                   // SET P6.1,P6.2,P6.3,P6.4,P6.5 FOR ADC PIN
-    P6DIR &=~0X3E;                   // SET P6.1,P6.2,P6.3,P6.4,P6.5 TO INPUT DIRECTION
-#elif SENSOR_TYPE == SENSOR_O2
-    P6SEL |= 0X33;                   // SET P6.0, P6.1, P6.4, P6.5 FOR ADC PIN 
-    P6DIR &=~0X33;                   // SET P6.0, P6.1, P6.4, P6.5 To Input Direction
-#endif   
-}
-
-void EnablePowerOn(void)
-{
-    P1OUT  |= POWER_SWITCH; 
-}
-
-/*! \fn void SystemPowerOff(void)
-    \brief shutdown the system.
- */
-void SystemPowerOff(void)
-{
-   _DINT();                         // GLOBE INTERRUPT DISABLE
-   P1DIR &=~ BACK_LIGHT; 
-   P1OUT &=~ POWER_SWITCH;          // POWER OFF.  
-   while (1) {}   
-}
-
-void EnableSysLowPowerMode()
-{
-    bEnableLowPowerMode = 1;
-}
-
-static unsigned char switch_flag = 0;
-
-void SystemLowPowerMode()
-{
-    switch_flag = !switch_flag;
-    if(switch_flag)
-        Alarm_LedOn();
-    else
-        Alarm_LedOff();
 }

@@ -1,7 +1,7 @@
 #ifndef SYSCONFIG_H
 #define SYSCONFIG_H
 
-#include "MSP430x23x.h"
+#include "MSP430x14x.h"
 #include "IODefines.h"
 
 #define  TRUE                 1

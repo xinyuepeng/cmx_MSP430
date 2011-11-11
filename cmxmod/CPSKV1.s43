@@ -15,6 +15,7 @@
 ; NOTE: it is assumed that the timer task is at cmx_tcb[0];
 ;
 ;The following is for the RAM TASK Control Block
+#include "MSP430x14x.h"
 tcbtimer	equ 	00h	;task countdown delay timer
 stk_save  	equ	02h	;the task's saved stack's address
 nxttcb  	equ	04h	;ptr to next TCB (task control block)
@@ -195,6 +196,7 @@ done_scheduler:
  	POP R6	
  	POP R5	
  	POP R4	
+        BIC #CPUOFF+SCG1+SCG0, 0(SP)
 	RETI
 task_ready:
 ;starting task from beginning brace

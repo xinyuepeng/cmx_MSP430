@@ -27,6 +27,7 @@ irq_rtn:
 ; links this code in, the very last instruction is not part of
 ; the output, so really the RET acks as an instruction, which will
 ; be left out and is not used, so we are fine!!!
+        BIC     #CPUOFF+SCG1+SCG0, SR
 	RET			;
 
 	end

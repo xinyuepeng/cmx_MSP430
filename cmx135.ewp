@@ -101,7 +101,7 @@
         </option>
         <option>
           <name>OGChipSelectMenu</name>
-          <state>MSP430F235	MSP430F235</state>
+          <state>MSP430F147	MSP430F147</state>
         </option>
         <option>
           <name>GStackHeapOverride</name>
@@ -1809,31 +1809,7 @@
     </file>
   </group>
   <file>
-    <name>$PROJ_DIR$\ADC.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\ADC.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\Alarm.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\Alarm.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\HMI.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\HMI.h</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\IODefines.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\KeyInput.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\KeyInput.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\main.c</name>
@@ -1846,18 +1822,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\SysConfig.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\SystemData.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\SystemData.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\SystemState.c</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\SystemState.h</name>
   </file>
 </project>
 
