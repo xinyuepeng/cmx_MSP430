@@ -12,11 +12,13 @@ void InitPowerClockController(void)
     BCSCTL2 = 0X00;                  // MCLK = DCOCLK, SMCLK = DCOCLK, = EXT CRYTAL
   
     //Init timerB as ticks
+    TBCCTL0 = CCIE;
     TBCTL  &=~ 0x30;
-    TBCCR0  =  327;      // SYSTEM CLOCK INTERRUPT PERIOD 10 ms( (1000*328)/32768  )
-    TBCTL   =  0x0116;   // ACLK
-    //TBCCR0 = 0xA4;      //10ms
-    //TBCTL = TBSSEL_1 + MC_1 + TAIE;
+    //TBCCR0  =  327;      // SYSTEM CLOCK INTERRUPT PERIOD 10 ms( (1000*328)/32768  )
+    //TBCTL   =  0x0116;   // ACLK
+
+    TBCCR0 = 327;//0xA4;      //10ms
+    TBCTL = TBSSEL_1 + MC_1 + TAIE;
 
     //Init Power control pin
     P1SEL &=~POWER_SWITCH;           // SET P1.5 FOR POWER SWITCH PIN

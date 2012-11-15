@@ -3,6 +3,8 @@ user different function calls and how to set them up. */
 
 #include "cpfuncs.h"
 #include "SysConfig.h"
+#include "SysUart.h"
+#include "DynamentPrimer.h"
 
 #define TASK_FRESH_LCD  0
 #define CMX_TEST        1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
@@ -82,13 +84,33 @@ byte enable_semaphores;
 void common_error(void);
 void int_handler(void);
 
+static unsigned char senddata[16];
+
 void ADC_Reading_task(void)
 {
 	byte status = 0;
         static unsigned counter = 0;
+        unsigned char flag = 0;
+        int len;
+        
         while(1)
         {
-          K_Task_Wait((unsigned short)500);
+#if 0          
+          len = PremierReadValueCmd(senddata, LIVE_DATA_SIMPLE_ID); 
+          MSP430UARTSendData(UART1, senddata, len);
+#endif          
+          if(flag > 0)
+              P4OUT |= 0x02;
+          else
+              P4OUT &= 0xFD;
+          
+          K_Task_Wait((unsigned short)100);
+#if 0          
+          PaserPremierResponse(receive1BufferUSART.bytesBuffer, receive1BufferUSART.counter);
+          senddata[0]='0'+len;
+          MSP430UARTSendData(UART0, senddata, 1);
+#endif    
+          flag = ~flag;
         }
 	
 	K_Task_End();
@@ -98,8 +120,10 @@ void HMI_Reflash_task(void)
 {
 	byte status = 0;
 	
+        
         while(1)
         {
+          
             K_Task_Wait(1000);
         }
 
@@ -156,6 +180,7 @@ int main(void)
 
 	// Initialize Timer A
         InitPowerClockController();
+        InitUart();
 	K_OS_Start();			/* enter CMX RTOS */
 }
 

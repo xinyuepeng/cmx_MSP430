@@ -227,9 +227,9 @@ void SystemLowPowerMode();
 #include "MSP430x14x.h"
 void K_OS_Low_Power_Func()
 {
-    P4OUT |= 0x01;
+//    P4OUT |= 0x01;
     LPM3;
-    P4OUT &= 0xFE;
+//    P4OUT &= 0xFE;
 }
 
 
